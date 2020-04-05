@@ -1,0 +1,22 @@
+.choice{
+    cursor: pointer;
+    width: 50%;
+    background: #ffffff;
+    text-align: center;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    border: 1px solid #DFE5EC;
+    border-radius: 6px;
+    box-sizing: border-box;
+    color: #4A4A4A;
+    padding: 13px;
+}
+.active{
+    background: #2196F3;
+    color: #ffffff;
+}
+.box{
+    max-width: 542px;
+    display: flex;
+    margin-bottom: 20px;
+}

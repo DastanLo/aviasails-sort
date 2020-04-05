@@ -1,0 +1,103 @@
+.filter{
+    width: 232px;
+    position: absolute;
+    left: 10.73%;
+    top: 11.85%;
+    background: #FFFFFF;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    padding-bottom: 10px;
+}
+.filter-title{
+    padding: 0 20px 0;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #4A4A4A;
+}
+.check-buttons{
+    display: flex;
+    flex-direction: column;
+}
+.filter-label{
+    cursor: pointer;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 13px;
+    line-height: 20px;
+    color: #4A4A4A;
+}
+.check-button-container:hover{
+    background: #F1FCFF;
+}
+.check-button-container{
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+}
+.check-button:checked,
+.check-button:not(:checked)
+{
+    position: absolute;
+    left: -9999px;
+}
+.check-button:checked + label,
+.check-button:not(:checked) + label {
+    display: inline-block;
+    position: relative;
+    padding-left: 30px;
+    line-height: 20px;
+    cursor: pointer;
+}
+.check-button:checked + label:before,
+.check-button:not(:checked) + label:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 20px;
+    height: 20px;
+    border: 1px solid #9ABBCE;
+    box-sizing: border-box;
+    border-radius: 2px;
+    background-color: #ffffff;
+}
+.check-button:checked + label:before,
+.check-button:not(:checked) + label:before {
+    border-radius: 2px;
+}
+.check-button:checked + label:after,
+.check-button:not(:checked) + label:after {
+    content: "";
+    position: absolute;
+    -webkit-transition: all 0.2s ease;
+    -moz-transition: all 0.2s ease;
+    -o-transition: all 0.2s ease;
+    transition: all 0.2s ease;
+}
+
+.check-button:checked + label:after,
+.check-button:not(:checked) + label:after {
+    left: 3px;
+    top: 4px;
+    width: 10px;
+    height: 5px;
+    border-radius: 1px;
+    border-left: 4px solid #2196F3;
+    border-bottom: 4px solid #2196F3;
+    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(-45deg);
+    -o-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+}
+.check-button:not(:checked) + label:after{
+    opacity: 0;
+}
+
+.check-button:checked + label:after{
+    opacity: 1;
+}
