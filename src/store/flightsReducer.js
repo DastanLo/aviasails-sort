@@ -4,7 +4,7 @@ import {
     GET_FLIGHTS_SUCCESS,
     GET_URL_CODE_ERROR,
     GET_URL_CODE_START,
-    GET_URL_CODE_SUCCESS, RESET_SORT_WITH, RESET_SORT_WITHOUT,
+    GET_URL_CODE_SUCCESS, RESET_ALL, RESET_SORT_WITH, RESET_SORT_WITHOUT,
     SORT_ALL,
     SORT_BY_PRICE,
     SORT_BY_SPEED,
@@ -42,6 +42,7 @@ const handlers = {
     [SORT_WITH_THREE]: sortWith,
     [RESET_SORT_WITH] : resetSortWith,
     [RESET_SORT_WITHOUT] : resetSortWithout,
+    [RESET_ALL] : resetAll,
     DEFAULT: (state) => state,
 };
 
@@ -99,7 +100,7 @@ function filterClassesChange(state, sortingKey, unSortingKey) {
 
 function sortWithout(state) {
     const sortedWithout = state.flights.filter(i => !i.segments.reduce((acc, val) => acc + val.stops.length, 0));
-    const newSortedState = state.sortedState.concat(sortedWithout.slice(0, 5));
+    const newSortedState = [...state.sortedState].concat(sortedWithout.slice(0, 5));
     if (state.filterClasses.cheapest.includes('active')) {
         return {...state, sortedState: newSortedState.sort(getCheapest)};
     }
@@ -108,7 +109,7 @@ function sortWithout(state) {
 
 function sortWith(state, amount) {
     const sortedWithout = state.flights.filter(i => i.segments.reduce((acc, val) => acc + val.stops.length, 0) === amount.amount);
-    const newSortedState = state.sortedState.concat(sortedWithout.slice(0, 5));
+    const newSortedState = [...state.sortedState].concat(sortedWithout.slice(0, 5));
     if (state.filterClasses.cheapest.includes('active')) {
         return {...state, sortedState: newSortedState.sort(getCheapest)};
     }
@@ -135,6 +136,10 @@ function resetSortWithout(state) {
         return {...state, sortedState: countingSpeedOfFlights(sortedWithout).sort(getFastest)};
     }
     return state;
+}
+
+function resetAll(state) {
+    return {...state, sortedState: []};
 }
 
 export default flightsReducer;

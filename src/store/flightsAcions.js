@@ -19,6 +19,7 @@ export const SORT_WITH_TWO = 'SORT_WITH_TWO';
 export const SORT_WITH_THREE = 'SORT_WITH_THREE';
 export const RESET_SORT_WITH = 'RESET_SORT';
 export const RESET_SORT_WITHOUT = 'RESET_SORT_WITHOUT';
+export const RESET_ALL = 'RESET_ALL';
 
 const requestStart = () => ({type: GET_FLIGHTS_START});
 const getFlightsData = flights => ({type: GET_FLIGHTS_SUCCESS, flights});
@@ -36,8 +37,10 @@ export const sortWithout = () => ({type: SORT_WITHOUT});
 export const sortWithOne = (amount) => ({type: SORT_WITH_ONE, amount});
 export const sortWithTwo = (amount) => ({type: SORT_WITH_TWO, amount});
 export const sortWithThree = (amount) => ({type: SORT_WITH_THREE, amount});
+
 export const resetSortWith = (amount) => ({type: RESET_SORT_WITH, amount});
 export const resetSortWithout = () => ({type : RESET_SORT_WITHOUT});
+export const resetAll = () => ({type : RESET_ALL});
 
 export const getUrlCode = () => async dispatch => {
     try {
