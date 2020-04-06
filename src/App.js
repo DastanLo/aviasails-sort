@@ -3,15 +3,7 @@ import Filter from "./Components/Filter/Filter";
 import CheapOrFast from "./Components/CheapOrFast/CheapOrFast";
 import FlightCard from "./Components/FlightCard/FlightCard";
 import {useDispatch, useSelector} from "react-redux";
-import {
-    getAllFlightsData,
-    getUrlCode, resetAll, resetSortWith, resetSortWithout,
-    sortCheapest,
-    sortFastest,
-    sortGetAll,
-    sortWithOne,
-    sortWithout, sortWithThree, sortWithTwo
-} from "./store/flightsAcions";
+import {getAllFlightsData, getUrlCode, resetSortWith, sortCheapest, sortFastest, sortWith} from "./store/flightsAcions";
 import {filters} from "./constants";
 import Spinner from "./Components/Spinner/Spinner";
 
@@ -21,13 +13,27 @@ const initializeFilter = () => {
     return state;
 };
 
-function usePrevious(value) {
+const usePrevious = (value) => {
     const ref = useRef();
     useEffect(() => {
         ref.current = value;
     });
     return ref.current;
-}
+};
+
+const waitingForChanges = (filter, prevFilter, dispatch, setFilter) => {
+    Object.keys(filters).forEach(i => {
+        if (filter[i] && filter[i] !== prevFilter[i]) {
+            dispatch(sortWith(i));
+        } else if (!filter[i] && filter[i] !== prevFilter[i]) {
+            if (i === 'all') {
+                setFilter(initializeFilter());
+                return dispatch(resetSortWith(i));
+            }
+            dispatch(resetSortWith(i));
+        }
+    })
+};
 
 const App = () => {
     const [filter, setFilter] = useState(initializeFilter());
@@ -50,41 +56,12 @@ const App = () => {
     const inputChangeHandler = (e) => {
         setFilter({...filter, [e.target.name]: e.target.checked});
     };
-    useEffect(() => {
-        if (!filter.all){
-                setFilter(initializeFilter());
-                dispatch(resetAll());
-        }
-    },[dispatch, filter.all]);
 
     useEffect(() => {
-        if (previousFilter){
-            if (filter.all && filter.all !== previousFilter.all) {
-                dispatch(sortGetAll());
-            }
-            if (filter.without && filter.without !== previousFilter.without) {
-                dispatch(sortWithout());
-            } else if (!filter.without && filter.without !== previousFilter.without) {
-                dispatch(resetSortWithout());
-            }
-            if (filter.one && filter.one !== previousFilter.one) {
-                dispatch(sortWithOne(1));
-            } else if (!filter.one && filter.one !== previousFilter.one) {
-                dispatch(resetSortWith(1));
-            }
-            if (filter.two && filter.two !== previousFilter.two) {
-                dispatch(sortWithTwo(2));
-            } else if (!filter.two && filter.two !== previousFilter.two) {
-                dispatch(resetSortWith(2));
-            }
-            if (filter.three && filter.three !== previousFilter.three) {
-                dispatch(sortWithThree(3));
-            } else if (!filter.three && filter.three !== previousFilter.three) {
-                dispatch(resetSortWith(3));
-            }
+        if (previousFilter) {
+            waitingForChanges(filter, previousFilter, dispatch,setFilter);
         }
-
-    }, [dispatch, filter,previousFilter]);
+    }, [dispatch, filter, previousFilter]);
 
     useEffect(() => {
         dispatch(getUrlCode());

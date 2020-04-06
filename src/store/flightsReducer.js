@@ -4,14 +4,11 @@ import {
     GET_FLIGHTS_SUCCESS,
     GET_URL_CODE_ERROR,
     GET_URL_CODE_START,
-    GET_URL_CODE_SUCCESS, RESET_ALL, RESET_SORT_WITH, RESET_SORT_WITHOUT,
-    SORT_ALL,
+    GET_URL_CODE_SUCCESS,
+    RESET_SORT_WITH,
     SORT_BY_PRICE,
     SORT_BY_SPEED,
-    SORT_WITH_ONE,
-    SORT_WITH_THREE,
-    SORT_WITH_TWO,
-    SORT_WITHOUT
+    SORT_WITH
 } from "./flightsAcions";
 
 const initialState = {
@@ -35,14 +32,8 @@ const handlers = {
     [GET_URL_CODE_ERROR]: (state, {error}) => ({...state, error}),
     [SORT_BY_PRICE]: sortByPrice,
     [SORT_BY_SPEED]: sortBySpeed,
-    [SORT_ALL]: sortAll,
-    [SORT_WITHOUT]: sortWithout,
-    [SORT_WITH_ONE]: sortWith,
-    [SORT_WITH_TWO]: sortWith,
-    [SORT_WITH_THREE]: sortWith,
-    [RESET_SORT_WITH] : resetSortWith,
-    [RESET_SORT_WITHOUT] : resetSortWithout,
-    [RESET_ALL] : resetAll,
+    [SORT_WITH]: sortWith,
+    [RESET_SORT_WITH]: resetSortWith,
     DEFAULT: (state) => state,
 };
 
@@ -63,7 +54,7 @@ function getFastest(a, b) {
 
 function sortAll(state) {
     if (state.filterClasses.cheapest.includes('active')) {
-        return {...state, sortedState: state.flights.sort(getCheapest).slice(0,20)}
+        return {...state, sortedState: state.flights.sort(getCheapest).slice(0, 20)}
     }
     return {...state, sortedState: countingSpeedOfFlights(state.flights).sort(getFastest)}
 }
@@ -98,8 +89,17 @@ function filterClassesChange(state, sortingKey, unSortingKey) {
     };
 }
 
-function sortWithout(state) {
-    const sortedWithout = state.flights.filter(i => !i.segments.reduce((acc, val) => acc + val.stops.length, 0));
+
+function sortWith(state, {criteria}) {
+    if (criteria === 'all') {
+        return sortAll(state);
+    }
+    let sortedWithout;
+    if (criteria === 'without') {
+        sortedWithout = state.flights.filter(i => !i.segments.reduce((acc, val) => acc + val.stops.length, 0));
+    } else {
+        sortedWithout = state.flights.filter(i => i.segments.reduce((acc, val) => acc + val.stops.length, 0) === parseInt(criteria));
+    }
     const newSortedState = [...state.sortedState].concat(sortedWithout.slice(0, 5));
     if (state.filterClasses.cheapest.includes('active')) {
         return {...state, sortedState: newSortedState.sort(getCheapest)};
@@ -107,35 +107,20 @@ function sortWithout(state) {
     return {...state, sortedState: countingSpeedOfFlights(newSortedState).sort(getFastest)};
 }
 
-function sortWith(state, amount) {
-    const sortedWithout = state.flights.filter(i => i.segments.reduce((acc, val) => acc + val.stops.length, 0) === amount.amount);
-    const newSortedState = [...state.sortedState].concat(sortedWithout.slice(0, 5));
+function resetSortWith(state, {criteria}) {
+    if (criteria === 'all'){
+        return resetAll(state);
+    }
+    let sortedWithout;
+    if (criteria === 'without') {
+         sortedWithout = state.sortedState.filter(i => i.segments.reduce((acc, val) => acc + val.stops.length, 0) > 0);
+    } else {
+        sortedWithout = state.sortedState.filter(i => i.segments.reduce((acc, val) => acc + val.stops.length, 0) !== parseInt(criteria));
+    }
     if (state.filterClasses.cheapest.includes('active')) {
-        return {...state, sortedState: newSortedState.sort(getCheapest)};
+        return {...state, sortedState: sortedWithout.sort(getCheapest)};
     }
-    return {...state, sortedState: countingSpeedOfFlights(newSortedState).sort(getFastest)};
-}
-
-function resetSortWith(state,amount) {
-    if (state.sortedState.length > 0){
-        const sortedWithout = state.sortedState.filter(i => i.segments.reduce((acc, val) => acc + val.stops.length, 0) !== amount.amount);
-        if (state.filterClasses.cheapest.includes('active')){
-            return {...state, sortedState: sortedWithout.sort(getCheapest)};
-        }
-        return {...state, sortedState: countingSpeedOfFlights(sortedWithout).sort(getFastest)};
-    }
-   return state;
-}
-
-function resetSortWithout(state) {
-    if (state.sortedState.length > 0){
-        const sortedWithout = state.sortedState.filter(i => i.segments.reduce((acc, val) => acc + val.stops.length, 0) > 0);
-        if (state.filterClasses.cheapest.includes('active')) {
-            return {...state, sortedState: sortedWithout.sort(getCheapest)};
-        }
-        return {...state, sortedState: countingSpeedOfFlights(sortedWithout).sort(getFastest)};
-    }
-    return state;
+    return {...state, sortedState: countingSpeedOfFlights(sortedWithout).sort(getFastest)};
 }
 
 function resetAll(state) {
